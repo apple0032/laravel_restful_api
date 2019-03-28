@@ -39,11 +39,11 @@ Route::group(['middleware' => ['web']], function () {
 	// Convert XML data & stored in DB
 	Route::get('/convert', ['uses' => 'PagesController@ConvertXMLStoreDB']);
 
+	//Data management
 	Route::get('/station', ['uses' => 'ApiController@getAllStation']);
+    Route::get('/station/{id}', ['uses' => 'ApiController@getStation']);
 	Route::post('/station', ['uses' => 'ApiController@postStation']);
-	Route::get('/station/{id}', ['uses' => 'ApiController@getStation']);
 	Route::put('/station/{id}', ['uses' => 'ApiController@updateStation']);
 	Route::delete('/station/{id}', ['uses' => 'ApiController@deleteStation']);
-
 	Route::post('/station/search', ['uses' => 'ApiController@getSearchStation']);
 });

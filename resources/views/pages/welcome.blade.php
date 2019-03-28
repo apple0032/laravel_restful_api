@@ -37,9 +37,9 @@ if (typeof jQuery != 'undefined') {
     var name = 'ipip';
 
     $.ajax({
-        url: 'station/'+id,
+        url: 'station',
         async: false,
-        type: 'PUT',  //GET, DELETE
+        type: 'GET',  //GET, DELETE
         data: {
             name: name,
         },
@@ -49,7 +49,7 @@ if (typeof jQuery != 'undefined') {
         },
         success: function (data) {
             if(data['result']['status'] == 'success'){
-                console.log('success');
+                console.log(data);
             }
         }
     });

@@ -23,6 +23,8 @@ class ApiController extends Controller
             ->leftJoin('type', 'station.type', '=', 'type.id')
             ->leftJoin('area', 'station.area_id', '=', 'area.id')
             ->leftJoin('district', 'station.district_id', '=', 'district.id')
+            ->where('station.is_delete','=','0')
+            ->where('station.is_active','=','1')
             ->get();
 
         $result = array(
@@ -195,7 +197,9 @@ class ApiController extends Controller
     public function updateStation(Request $request, $id) {
 
         $station = Station::where('id','=',$id)->first();
-        $station->img = $request->img;
+        foreach ($request->all() as $k => $updates){
+            $station->$k = $updates;
+        }
         $station->save();
 
         $result = array(
@@ -211,13 +215,14 @@ class ApiController extends Controller
 
     public function deleteStation($id) {
 
+        $station = Station::where('id','=',$id)->first();
+        $station->is_delete = 1;
+        $station->save();
+
         $result = array(
             'status' => 'success',
-            'type' => 'delete',
-            'item' => array(
-                'id'   => $id,
-                'name' => 'ken',
-            )
+            'type' => 'Delete station',
+            'station' => $station,
         );
 
        return response()->json([
