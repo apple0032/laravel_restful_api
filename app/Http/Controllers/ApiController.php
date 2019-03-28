@@ -85,7 +85,9 @@ class ApiController extends Controller
 
             $station->where(function ($query) use ($types) {
                 foreach ($types as $type) {
-                    $query->orwhereRaw("find_in_set($type,station.type)");
+                    if($type != ''){
+                        $query->orwhereRaw("find_in_set($type,station.type)");
+                    }
                 }
             });
         }
@@ -128,28 +130,62 @@ class ApiController extends Controller
 
 
     public function postStation(Request $request) {
-        
-        die('test github');
 
         $validator = Validator::make($request->all(), [
-           'name' => 'required|string|unique:users|max:10',
-           'role' => 'required|string|max:50',
+           //'location_en' => 'required|string|unique:station|max:50',
+            'location_en' => 'required|string|max:50',
+            'location_tc' => 'required|string|max:50',
+            'lat' => 'required|string|max:30',
+            'lng' => 'required|string|max:30',
+            'type' => 'required|string|max:10',
+            'district_id' => 'required|integer|max:30',
+            'address_en' => 'required|string|max:250',
+            'address_tc' => 'required|string|max:250',
+            'provider_user_id' => 'required|integer|max:20',
        ]);
         
        if ($validator->fails()) {
             return $this->validator($validator->messages()->toArray());
        }
 
+       $station = new Station();
+       $station->location_en = $request->location_en;
+       $station->location_tc = $request->location_tc;
+       $station->lat = $request->lat;
+       $station->lng = $request->lng;
+       $station->type = $request->type;
+       $station->district_id = $request->district_id;
+       $station->address_en = $request->address_en;
+       $station->address_tc = $request->address_tc;
+       $district = District::select('area_id')->where('id','=',$request->district_id)->first();
+       $station->area_id = $district->area_id;
+       $station->provider = null;
+       $station->provider_user_id = $request->provider_user_id;
+       $station->parkingNo = $request->parkingNo;
+       $station->img = $request->img;
+       $station->is_active = 1;
+       $station->is_delete = 0;
+       $station->save();
+
         $result = array(
             'status' => 'success',
-            'type' => 'new post',
-            'item' => array(
-                'name' => $request->name,
-                'role' => $request->role,
-                'level' => 'master tier',
-                'salary' => '50k/month',
-            )
+            'type' => 'New station created',
+            'station' => $station
         );
+
+        /* Params example
+            location_en:Temple Chinese
+            location_tc:中文
+            lat:22.4504833221436
+            lng:114.160835266113
+            type:1,2
+            district_id:15
+            address_en:Ygate
+            address_tc:歪基
+            provider_user_id:1
+            parkingNo:
+            img:/test.png
+        */
 
        return response()->json([
            'result' => $result
@@ -158,16 +194,14 @@ class ApiController extends Controller
 
     public function updateStation(Request $request, $id) {
 
+        $station = Station::where('id','=',$id)->first();
+        $station->img = $request->img;
+        $station->save();
+
         $result = array(
             'status' => 'success',
-            'type' => 'update post',
-            'item' => array(
-                'id' => $id,
-                'name' => $request->name,
-                'role' => $request->role,
-                'level' => 'master tier',
-                'salary' => '50k/month',
-            )
+            'type' => 'Update station',
+            'station' => $station,
         );
 
        return response()->json([
