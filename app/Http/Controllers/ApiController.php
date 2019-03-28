@@ -128,6 +128,8 @@ class ApiController extends Controller
 
 
     public function postStation(Request $request) {
+        
+        die('test github');
 
         $validator = Validator::make($request->all(), [
            'name' => 'required|string|unique:users|max:10',
