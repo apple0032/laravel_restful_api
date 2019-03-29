@@ -114,6 +114,13 @@ class ApiController extends Controller
         $station = $station->where('station.is_delete','=','0');
 
         //Execute query
+        if ($request->limit != null) {
+            $station = $station->limit($request->limit);
+        }
+        if ($request->offset != null) {
+            $station = $station->offset($request->offset);
+        }
+
         $station = $station->get();
 
         //Return result

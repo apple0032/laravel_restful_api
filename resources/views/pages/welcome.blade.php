@@ -1,28 +1,43 @@
 @extends('main')
 
 @section('title', '| Homepage')
+<style>
+    .station_box img{
+        width:300px;
+        height: 130px;
+    }
 
+    .station_item{
+        font-family: 'Noto Sans TC', sans-serif !important;
+        background-color: white;
+        box-shadow: 0 1px 4px rgba(41, 51, 57, .5);
+        color: #37454d;
+        margin-bottom: 10px;
+        padding: 10px;
+
+    }
+</style>
 @section('content')
         <div class="row">
             <div class="col-md-12">
-                <h3>Index</h3>
-                <div class="jumbotron" style="display: none">
-                  <h1>Welcome to My Blog!</h1>
-                  <p class="lead">Thank you so much for visiting. This is my test website built with Laravel. Please read my popular post!</p>
-                  <p><a class="btn btn-primary btn-lg" href="#" role="button">Popular Post</a></p>
-                </div>
+                <h3>Station</h3>
             </div>
         </div> <!-- end of header .row -->
 
-        <div class="row">
-            <div class="col-md-8">
-                
+        <div class="row station_box">
+            <div class="col-md-12">
 
+                <div class="row" id="station_area">
+                    {{--@foreach($station as $s)--}}
+                        {{--<div class="col-md-3 station_item">--}}
+                            {{--{{$s['location_tc']}} <br>--}}
+                            {{--<img src="{{URL::to('/')}}/public/images/{{$s['type']}}.jpg" class="img-responsive">--}}
+                        {{--</div>--}}
+                    {{--@endforeach--}}
+
+                </div>
             </div>
 
-            <div class="col-md-3 col-md-offset-1">
-                <h4>Sidebar</h4>
-            </div>
         </div>
 @stop
 
@@ -37,11 +52,12 @@ if (typeof jQuery != 'undefined') {
     var name = 'ipip';
 
     $.ajax({
-        url: 'station',
+        url: 'station/search',
         async: false,
-        type: 'GET',  //GET, DELETE
+        type: 'POST',  //GET, DELETE
         data: {
-            name: name,
+            //type: 1,
+            //district_id: 15
         },
         dataType: 'JSON',
         beforeSend: function () {
@@ -49,8 +65,13 @@ if (typeof jQuery != 'undefined') {
         },
         success: function (data) {
             if(data['result']['status'] == 'success'){
-                console.log(data);
+                //console.log(data);
             }
+
+            $.each(data.result.station, function(key,val) {
+                //console.log(val.location_en);
+                $('#station_area').append('<div class="col-md-3 station_item">'+val.location_tc+'</div>');
+            });
         }
     });
 

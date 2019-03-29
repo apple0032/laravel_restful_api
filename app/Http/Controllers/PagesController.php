@@ -18,9 +18,14 @@ class PagesController extends Controller {
 	public function getIndex() {
 
 		$posts = 'null';
+		$station = app('App\Http\Controllers\ApiController')->getAllStation()->getData();
+        $station = json_decode(json_encode($station), True);
 
-		return view('pages.welcome')
-		->withPosts($posts);
+        $station = $station['result']['station'];
+        //echo '<pre>'; print_r($station); echo '</pre>'; die();
+
+        return view('pages.welcome')
+		->with('station',$station);
 	}
 
 	public function getXMLdata_en(){
