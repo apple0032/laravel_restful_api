@@ -9,13 +9,13 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#">Laravel API</a>
+      <a class="navbar-brand" href="#"><i class="fab fa-battle-net"></i> Station Management System</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="{{ Request::is('/') ? "active" : "" }}"><a href="/blog/public">Home</a></li>
+        <li class="{{ Request::is('/') ? "active" : "" }}"><a href="">Home</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         @if (Auth::check())

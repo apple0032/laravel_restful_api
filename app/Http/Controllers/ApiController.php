@@ -44,12 +44,13 @@ class ApiController extends Controller
     public function getStation($id) {
 
         $station = DB::table('station')
-            ->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name' , 'district.name_tc as district_name_tc')
+            ->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name_en' , 'district.name_tc as district_name_tc','users.name as username')
             ->leftJoin('type', 'station.type', '=', 'type.id')
             ->leftJoin('area', 'station.area_id', '=', 'area.id')
             ->leftJoin('district', 'station.district_id', '=', 'district.id')
+            ->leftJoin('users','station.provider_user_id', '=' , 'users.id')
             ->where('station.id','=',$id)
-            ->get();
+            ->first();
 
         $result = array(
             'status' => 'success',
@@ -68,10 +69,11 @@ class ApiController extends Controller
 
         //Join Table
         $station = DB::table('station')
-            ->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name' , 'district.name_tc as district_name_tc')
+            ->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name_en' , 'district.name_tc as district_name_tc' ,'users.name as username')
             ->leftJoin('type', 'station.type', '=', 'type.id')
             ->leftJoin('area', 'station.area_id', '=', 'area.id')
-            ->leftJoin('district', 'station.district_id', '=', 'district.id');
+            ->leftJoin('district', 'station.district_id', '=', 'district.id')
+            ->leftJoin('users','station.provider_user_id', '=' , 'users.id');
 
         //Search condition
         if ($request->name != null) {
@@ -113,7 +115,8 @@ class ApiController extends Controller
         $station = $station->where('station.is_active','=','1');
         $station = $station->where('station.is_delete','=','0');
 
-        //Execute query
+        $c_station = $station->get();   //count total station without offset & limit
+
         if ($request->limit != null) {
             $station = $station->limit($request->limit);
         }
@@ -121,13 +124,15 @@ class ApiController extends Controller
             $station = $station->offset($request->offset);
         }
 
-        $station = $station->get();
+        //Execute query
+        $station = $station->orderBy('id','desc')->get();
 
         //Return result
         $result = array(
             'status' => 'success',
             'type' => 'Search stations by requested criteria',
-            'total' => count($station),
+            'total' => count($c_station),
+            'display' => count($station),
             'station' => $station,
         );
 
@@ -206,7 +211,12 @@ class ApiController extends Controller
         $station = Station::where('id','=',$id)->first();
         foreach ($request->all() as $k => $updates){
             $station->$k = $updates;
+            if($k == 'district_id'){
+                $area_id = District::select('area_id')->where('id','=',$updates)->first();
+                $station->area_id = $area_id->area_id;
+            }
         }
+
         $station->save();
 
         $result = array(
