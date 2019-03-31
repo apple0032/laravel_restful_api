@@ -6,9 +6,6 @@
     {!! Html::style('public/css/parsley.css') !!}
     {!! Html::style('public/css/select2.min.css') !!}
 @endsection
-
-<link rel="stylesheet" type="text/css" href="{{ URL::asset('public/css/main.css') }}">
-
 <style>
     .container{
         font-family: 'Raleway' !important;
@@ -120,7 +117,7 @@
 
     @media (min-width: 768px) {
         .modal-dialog {
-            width: 800px !important;
+            width: 900px !important;
             margin: 30px auto;
         }
     }
@@ -150,8 +147,13 @@
         margin-bottom: 5px;
     }
 
-    #map {
-        height: 350px;
+    .create_form{
+        display: none;
+        padding: 15px;
+    }
+
+    #map , #map2{
+        height: 320px;
     }
 
     .lds-hourglass {
@@ -203,7 +205,7 @@
         <div class="row">
             <div class="col-md-12 station_header">
                 <i class="fas fa-charging-station"></i> <span>Electric vehicle charging station</span>
-                <button type="button" class="btn btn-primary btn_lang" onclick="changeLanguage()" data-lang="en">中文</button>
+                <button type="button" class="btn btn-primary btn_lang" onclick="changeLanguage()" data-lang="en" data-toggle="tooltip" title="Change language">中文</button>
                 {{--<input class="btn btn-info btn_lang" type="button" value="tc" onclick="changeLanguage()">--}}
             </div>
         </div> <!-- end of header .row -->
@@ -247,11 +249,11 @@
                     </div>
                     <div class="show_content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Modal Header</h4>
+                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                            <h4 class="modal-title">View</h4>
                         </div>
                         <div class="modal-body">
-                            <iframe width="100%" height="30%" id="gmap_canvas"
+                            <iframe width="100%" height="25%" id="gmap_canvas"
                                     src=""
                                     frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
                             </iframe>
@@ -295,8 +297,8 @@
                     </div>
                     <div class="update_content">
                         <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Modal Header</h4>
+                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                            <h4 class="modal-title">Update</h4>
                         </div>
                         <div class="row update_form">
                             <div class="col-md-6">
@@ -363,6 +365,80 @@
                             <button type="button" class="btn btn-danger" id="station_back">Back</button>
                         </div>
                     </div>
+
+
+                    <div class="create_form">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                            <h4 class="title">Create New Station</h4>
+                        </div>
+                        <div class="row update_form">
+                            <div class="col-md-6">
+                                <label name="subject">Location EN</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input id="location_en" class="form-control" type="text" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label name="subject">Location TC</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                    <input id="location_tc" class="form-control" type="text" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label name="subject">Address EN</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                    <input id="address_en" class="form-control" type="text" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label name="subject">Address TC</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                    <input id="address_tc" class="form-control" type="text" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label name="subject">Parking Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fas fa-car"></i></span>
+                                    <input id="parking_no" class="form-control" type="text" maxlength="80">
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label name="subject">District</label>
+                                <select class="form-control" id="district_id">
+                                    <option value="" selected> -</option>
+                                    @foreach($district_list as $district)
+                                        <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label name="subject">Type</label>
+                                <select class="form-control select2-multi" name="s_types[]" id="s_types" multiple="multiple" style="width: 100%">
+                                    @foreach($type_list as $type)
+                                        <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-12">
+                                <label name="subject">Longitude & Latitude</label>
+                                <div id="map2"></div>
+                                <input type="hidden" id="map_lat" value="">
+                                <input type="hidden" id="map_lng" value="">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-success" id="station_create">Create</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
         </div>
@@ -494,7 +570,7 @@ function clickStationInfo() {
                 dataType: 'JSON',
                 beforeSend: function () {
                     $('.px_loading').show();
-                    $(".show_content").css("opacity", "0.5");
+                    $(".show_content").css("opacity", "0.2");
                     $(".show_content").css("pointer-events", "none");
                 },
                 success: function (data) {
@@ -717,7 +793,103 @@ $('#station_confirm').click(function(){
 $(".modal").on("hidden.bs.modal", function () {
     $('.show_content').fadeIn();
     $('.update_content').fadeOut();
+    $('.create_form').fadeOut();
 });
+
+
+$('.create_new_station a').click(function(e) {
+    e.preventDefault();
+
+    $('#modal_btn').click();
+
+    $('.show_content').fadeOut();
+    $('.update_content').fadeOut();
+    $('.create_form').fadeIn();
+
+    var myLatLng = {lat: 22.343208608975587, lng: 114.1068853139875};
+
+    map = new google.maps.Map(document.getElementById('map2'), {
+        zoom: 15,
+        center: myLatLng
+    });
+
+    marker = new google.maps.Marker({
+        position: myLatLng,
+        map: map,
+        draggable: true,
+        icon: 'public/images/red_marker.png'
+        //title: 'Hello World!'
+    });
+
+    google.maps.event.addListener(marker, 'dragend', function (event) {
+        var lat = this.getPosition().lat();
+        var lng = this.getPosition().lng();
+        console.log(lat+','+lng);
+
+        $('.create_form #map_lat').val(lat);
+        $('.create_form #map_lng').val(lng);
+    });
+
+});
+
+    $('#station_create').click(function(){
+        var con = confirm("Are you sure you want to create?");
+        if (con) {
+            var loc_en = $('.create_form #location_en').val();
+            var loc_tc = $('.create_form #location_tc').val();
+            var address_en = $('.create_form #address_en').val();
+            var address_tc = $('.create_form #address_tc').val();
+            var parking = $('.create_form #parking_no').val();
+            var map_lat = $('.create_form #map_lat').val();
+            var map_lng = $('.create_form #map_lng').val();
+            var district_id = $(".create_form #district_id").val();
+            var type = $('.create_form #s_types').val();
+            var temp = '';
+            $.each(type, function (key, val) {
+                temp = temp + val +',';
+            });
+            type = temp.slice(0,-1);
+            var userid = '{{$user_id}}';
+
+            $.ajax({
+                url: 'station',
+                async: false,
+                type: 'POST',
+                data: {
+                    location_en: loc_en,
+                    location_tc: loc_tc,
+                    address_en: address_en,
+                    address_tc: address_tc,
+                    parkingNo: parking,
+                    lat: map_lat,
+                    lng: map_lng,
+                    district_id : district_id,
+                    type : type,
+                    provider_user_id: userid
+                },
+                dataType: 'JSON',
+                beforeSend: function () {
+
+                },
+                success: function (data) {
+                    if(data['result']['status'] == 'success') {
+                        console.log(data);
+
+                        $('.modal').modal('hide');
+                        $('.alert_message').html('Station Created.');
+                        $('.alert-success').fadeIn();
+                        setTimeout(function(){
+                            $('.alert-success').fadeOut();
+                        }, 1500);
+
+                        getPageStation();
+                    }
+                }
+            });
+
+        }
+    });
+
 
 </script>
 

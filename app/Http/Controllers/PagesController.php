@@ -12,30 +12,36 @@ use App\District;
 use Mail;
 use Session;
 use Schema;
+use Auth;
 
 class PagesController extends Controller {
 
-	public function getIndex() {
+	public function getIndex()
+    {
+        if(!Auth::check()){
+            return redirect('auth/login');
+        } else {
+            $user_id = Auth::user()->id;
+        };
 
-		$station = app('App\Http\Controllers\ApiController')->getAllStation()->getData();
+        $station = app('App\Http\Controllers\ApiController')->getAllStation()->getData();
         $station = json_decode(json_encode($station), True);
 
         $total_station = count($station['result']['station']);
         $per_page = 32;
-        $total_page = intval($total_station/$per_page) +1;
+        $total_page = intval($total_station / $per_page) + 1;
 
         //echo '<pre>'; print_r($station); echo '</pre>'; die();
 
-        $district_list = District::where('is_active','=','1')->get()->toArray();
-        $type_list = Type::where('is_active','=','1')->where('is_delete','=','0')->get()->toArray();
-
-        //print_r($type_list);die();
+        $district_list = District::where('is_active', '=', '1')->get()->toArray();
+        $type_list = Type::where('is_active', '=', '1')->where('is_delete', '=', '0')->get()->toArray();
 
         return view('pages.welcome')
         ->with('total_page',$total_page)
         ->with('per_page',$per_page)
         ->with('district_list', $district_list)
-        ->with('type_list',$type_list);
+        ->with('type_list',$type_list)
+        ->with('user_id', $user_id);
 	}
 
 	public function getXMLdata_en(){
