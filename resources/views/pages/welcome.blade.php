@@ -12,7 +12,7 @@
     }
 
     .station_box img{
-        width:320px;
+        width:100%;
         height: 250px;
     }
 
@@ -203,246 +203,260 @@
         </div>
 
         <div class="row">
-            <div class="col-md-12 station_header">
-                <i class="fas fa-charging-station"></i> <span>Electric vehicle charging station</span>
-                <button type="button" class="btn btn-primary btn_lang" onclick="changeLanguage()" data-lang="en" data-toggle="tooltip" title="Change language">中文</button>
-                {{--<input class="btn btn-info btn_lang" type="button" value="tc" onclick="changeLanguage()">--}}
+            <div class="col-md-2">
+                <div class="search_sidebar">
+                    <div class="search_item">
+                        <label name="subject">Location</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                            <input id="search_location" class="form-control" type="text" maxlength="80">
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div> <!-- end of header .row -->
-
-        <div class="row station_box">
-            <div class="col-md-12">
-
-                <div class="row page_info">
-                    <div class="col-md-6">
-                        <span>Total <span id="total_station"></span> Stations found.</span>
+            <div class="col-md-10">
+                <div class="row">
+                    <div class="col-md-12 station_header">
+                        <i class="fas fa-charging-station"></i> <span>Electric vehicle charging station</span>
+                        <button type="button" class="btn btn-primary btn_lang" onclick="changeLanguage()" data-lang="en" data-toggle="tooltip" title="Change language">中文</button>
+                        {{--<input class="btn btn-info btn_lang" type="button" value="tc" onclick="changeLanguage()">--}}
                     </div>
-                    <div class="col-md-6" style="text-align: right">
-                        <span>Page. <span id="page">1</span> / Total <span id="total_page">{{$total_page}}</span> pages.</span>
+                </div> <!-- end of header .row -->
+
+                <div class="row station_box">
+                    <div class="col-md-12">
+
+                        <div class="row page_info">
+                            <div class="col-md-6">
+                                <span>Total <span id="total_station"></span> Stations found.</span>
+                            </div>
+                            <div class="col-md-6" style="text-align: right">
+                                <span>Page. <span id="page">1</span> / Total <span id="total_page">{{$total_page}}</span> pages.</span>
+                            </div>
+                        </div>
+
+                        <div class="row" id="station_area">
+
+                        </div>
+
+                        <div class="pagination">
+                            @for ($i = 1; $i <= $total_page; $i++)
+                                <div class="page_item" id="page_{{$i}}" onclick="changePage({{$i}})">{{$i}}</div>
+                            @endfor
+                                <input type="hidden" id="current_page" value="1">
+                        </div>
+
                     </div>
                 </div>
 
-                <div class="row" id="station_area">
+                <button type="button" id="modal_btn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Modal"></button>
 
+                <!-- Modal -->
+                <div class="modal fade" id="Modal" role="dialog">
+                    <div class="modal-dialog">
+
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="px_loading">
+                                <div class="lds-hourglass"></div>
+                            </div>
+                            <div class="show_content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                                    <h4 class="modal-title">View</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <iframe width="100%" height="25%" id="gmap_canvas"
+                                            src=""
+                                            frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                                    </iframe>
+
+                                    <iframe width="100%" height="30%" id="gmap_street"
+                                            src=""
+                                            frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+                                    </iframe>
+
+                                    <hr>
+                                    <div class="station_info">
+                                        <div class="station_address">
+                                            <i class="fas fa-map-marked-alt"></i>
+                                            <span></span>
+                                        </div>
+                                        <div class="station_parking">
+                                            <i class="fas fa-car"></i>
+                                            <span></span>
+                                        </div>
+                                        <div class="station_type">
+                                            <i class="fas fa-charging-station"></i>
+                                            <span></span>
+                                        </div>
+                                        <div class="station_area">
+                                            <i class="fas fa-map-signs"></i>
+                                            <span></span>
+                                        </div>
+                                        <div class="station_provide">
+                                            <i class="fas fa-id-card-alt"></i>
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="station_update">Update</button>
+                                    <button type="button" class="btn btn-danger" id="station_del">Delete</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+
+                                <input type="hidden" id="modal_id" value="0">
+                            </div>
+                            <div class="update_content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                                    <h4 class="modal-title">Update</h4>
+                                </div>
+                                <div class="row update_form">
+                                    <div class="col-md-6">
+                                        <label name="subject">Location EN</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input id="location_en" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Location TC</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input id="location_tc" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Address EN</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                            <input id="address_en" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Address TC</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                            <input id="address_tc" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Parking Number</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-car"></i></span>
+                                            <input id="parking_no" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">District</label>
+                                        <select class="form-control" id="district_id">
+                                            <option value="" selected> -</option>
+                                            @foreach($district_list as $district)
+                                                <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Type</label>
+                                        <select class="form-control select2-multi" name="s_types[]" id="s_types" multiple="multiple" style="width: 100%">
+                                            @foreach($type_list as $type)
+                                                <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Longitude & Latitude</label>
+                                        <div id="map"></div>
+                                        <input type="hidden" id="map_lat" value="">
+                                        <input type="hidden" id="map_lng" value="">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" id="station_confirm">Confirm</button>
+                                    <button type="button" class="btn btn-danger" id="station_back">Back</button>
+                                </div>
+                            </div>
+
+
+                            <div class="create_form">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                                    <h4 class="title">Create New Station</h4>
+                                </div>
+                                <div class="row update_form">
+                                    <div class="col-md-6">
+                                        <label name="subject">Location EN</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input id="location_en" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Location TC</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
+                                            <input id="location_tc" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Address EN</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                            <input id="address_en" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label name="subject">Address TC</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                                            <input id="address_tc" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Parking Number</label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fas fa-car"></i></span>
+                                            <input id="parking_no" class="form-control" type="text" maxlength="80">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">District</label>
+                                        <select class="form-control" id="district_id">
+                                            <option value="" selected> -</option>
+                                            @foreach($district_list as $district)
+                                                <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Type</label>
+                                        <select class="form-control select2-multi" name="s_types[]" id="s_types" multiple="multiple" style="width: 100%">
+                                            @foreach($type_list as $type)
+                                                <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label name="subject">Longitude & Latitude</label>
+                                        <div id="map2"></div>
+                                        <input type="hidden" id="map_lat" value="">
+                                        <input type="hidden" id="map_lng" value="">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-success" id="station_create">Create</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
                 </div>
-
-                <div class="pagination">
-                    @for ($i = 1; $i <= $total_page; $i++)
-                        <div class="page_item" id="page_{{$i}}" onclick="changePage({{$i}})">{{$i}}</div>
-                    @endfor
-                        <input type="hidden" id="current_page" value="1">
-                </div>
-
             </div>
         </div>
-
-        <button type="button" id="modal_btn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Modal"></button>
-
-        <!-- Modal -->
-        <div class="modal fade" id="Modal" role="dialog">
-            <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="px_loading">
-                        <div class="lds-hourglass"></div>
-                    </div>
-                    <div class="show_content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
-                            <h4 class="modal-title">View</h4>
-                        </div>
-                        <div class="modal-body">
-                            <iframe width="100%" height="25%" id="gmap_canvas"
-                                    src=""
-                                    frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
-                            </iframe>
-
-                            <iframe width="100%" height="30%" id="gmap_street"
-                                    src=""
-                                    frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
-                            </iframe>
-
-                            <hr>
-                            <div class="station_info">
-                                <div class="station_address">
-                                    <i class="fas fa-map-marked-alt"></i>
-                                    <span></span>
-                                </div>
-                                <div class="station_parking">
-                                    <i class="fas fa-car"></i>
-                                    <span></span>
-                                </div>
-                                <div class="station_type">
-                                    <i class="fas fa-charging-station"></i>
-                                    <span></span>
-                                </div>
-                                <div class="station_area">
-                                    <i class="fas fa-map-signs"></i>
-                                    <span></span>
-                                </div>
-                                <div class="station_provide">
-                                    <i class="fas fa-id-card-alt"></i>
-                                    <span></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" id="station_update">Update</button>
-                            <button type="button" class="btn btn-danger" id="station_del">Delete</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-
-                        <input type="hidden" id="modal_id" value="0">
-                    </div>
-                    <div class="update_content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
-                            <h4 class="modal-title">Update</h4>
-                        </div>
-                        <div class="row update_form">
-                            <div class="col-md-6">
-                                <label name="subject">Location EN</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input id="location_en" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Location TC</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input id="location_tc" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Address EN</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
-                                    <input id="address_en" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Address TC</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
-                                    <input id="address_tc" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Parking Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-car"></i></span>
-                                    <input id="parking_no" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">District</label>
-                                <select class="form-control" id="district_id">
-                                    <option value="" selected> -</option>
-                                    @foreach($district_list as $district)
-                                        <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Type</label>
-                                <select class="form-control select2-multi" name="s_types[]" id="s_types" multiple="multiple" style="width: 100%">
-                                    @foreach($type_list as $type)
-                                        <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Longitude & Latitude</label>
-                                <div id="map"></div>
-                                <input type="hidden" id="map_lat" value="">
-                                <input type="hidden" id="map_lng" value="">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="station_confirm">Confirm</button>
-                            <button type="button" class="btn btn-danger" id="station_back">Back</button>
-                        </div>
-                    </div>
-
-
-                    <div class="create_form">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
-                            <h4 class="title">Create New Station</h4>
-                        </div>
-                        <div class="row update_form">
-                            <div class="col-md-6">
-                                <label name="subject">Location EN</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input id="location_en" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Location TC</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
-                                    <input id="location_tc" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Address EN</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
-                                    <input id="address_en" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label name="subject">Address TC</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
-                                    <input id="address_tc" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Parking Number</label>
-                                <div class="input-group">
-                                    <span class="input-group-addon"><i class="fas fa-car"></i></span>
-                                    <input id="parking_no" class="form-control" type="text" maxlength="80">
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">District</label>
-                                <select class="form-control" id="district_id">
-                                    <option value="" selected> -</option>
-                                    @foreach($district_list as $district)
-                                        <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Type</label>
-                                <select class="form-control select2-multi" name="s_types[]" id="s_types" multiple="multiple" style="width: 100%">
-                                    @foreach($type_list as $type)
-                                        <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-12">
-                                <label name="subject">Longitude & Latitude</label>
-                                <div id="map2"></div>
-                                <input type="hidden" id="map_lat" value="">
-                                <input type="hidden" id="map_lng" value="">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-success" id="station_create">Create</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-
 @stop
 
 @section('scripts')
@@ -510,6 +524,7 @@ function getPageStation() {
     var page = getCurrentPage();
     var limit = '{{$per_page}}';   //Station per page
     var offset = (page * limit) - limit;
+    var name = $("#search_location").val();
 
     $.ajax({
         url: 'station/search',
@@ -517,7 +532,8 @@ function getPageStation() {
         type: 'POST',  //GET, DELETE
         data: {
             limit: limit,
-            offset: offset
+            offset: offset,
+            name: name
         },
         dataType: 'JSON',
         beforeSend: function () {
@@ -890,6 +906,9 @@ $('.create_new_station a').click(function(e) {
         }
     });
 
+    $("#search_location").keyup(function(){
+        getPageStation();
+    });
 
 </script>
 
