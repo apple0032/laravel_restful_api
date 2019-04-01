@@ -196,6 +196,10 @@
         z-index: 50;
         display: none;
     }
+    
+    .search_item{
+        margin-bottom: 20px;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -210,6 +214,13 @@
                         <div class="input-group">
                             <span class="input-group-addon"><i class="fas fa-map-marker-alt"></i></span>
                             <input id="search_location" class="form-control" type="text" maxlength="80">
+                        </div>
+                    </div>
+                    <div class="search_item">
+                        <label name="subject">Address</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fas fa-map-marked"></i></span>
+                            <input id="search_address" class="form-control" type="text" maxlength="80">
                         </div>
                     </div>
                 </div>
@@ -525,6 +536,7 @@ function getPageStation() {
     var limit = '{{$per_page}}';   //Station per page
     var offset = (page * limit) - limit;
     var name = $("#search_location").val();
+    var address = $('#search_address').val();
 
     $.ajax({
         url: 'station/search',
@@ -533,7 +545,8 @@ function getPageStation() {
         data: {
             limit: limit,
             offset: offset,
-            name: name
+            name: name,
+            address: address
         },
         dataType: 'JSON',
         beforeSend: function () {
@@ -725,6 +738,7 @@ function DeleteStation(id) {
 
                     $('.alert_message').html('Station Deleted.');
                     $('.alert-success').fadeIn();
+                    $("html, body").animate({scrollTop: 0}, "slow");
                     setTimeout(function(){
                         $('.alert-success').fadeOut();
                     }, 1500);
@@ -794,6 +808,7 @@ $('#station_confirm').click(function(){
                     $('.modal').modal('hide');
                     $('.alert_message').html('Station Updated.');
                     $('.alert-success').fadeIn();
+                    $("html, body").animate({scrollTop: 0}, "slow");
                     setTimeout(function(){
                         $('.alert-success').fadeOut();
                     }, 1500);
@@ -894,6 +909,7 @@ $('.create_new_station a').click(function(e) {
                         $('.modal').modal('hide');
                         $('.alert_message').html('Station Created.');
                         $('.alert-success').fadeIn();
+                        $("html, body").animate({scrollTop: 0}, "slow");
                         setTimeout(function(){
                             $('.alert-success').fadeOut();
                         }, 1500);
@@ -906,7 +922,7 @@ $('.create_new_station a').click(function(e) {
         }
     });
 
-    $("#search_location").keyup(function(){
+    $("#search_location, #search_address").keyup(function(){
         getPageStation();
     });
 
