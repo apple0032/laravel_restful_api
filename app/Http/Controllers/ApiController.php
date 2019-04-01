@@ -155,7 +155,7 @@ class ApiController extends Controller
             'district_id' => 'required|integer|max:30',
             'address_en' => 'required|string|max:250',
             'address_tc' => 'required|string|max:250',
-            'provider_user_id' => 'required|integer|max:20',
+            //'provider_user_id' => 'required|integer|max:20',
        ]);
         
        if ($validator->fails()) {

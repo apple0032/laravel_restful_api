@@ -13,7 +13,7 @@
 
     .station_box img{
         width:100%;
-        height: 250px;
+        height: 200px;
     }
 
     .station_item{
@@ -65,7 +65,7 @@
         margin-bottom: 10px;
         display: block;
         font-weight: bold;
-        width: 300px;
+        width: 220px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -198,7 +198,25 @@
     }
     
     .search_item{
-        margin-bottom: 20px;
+        margin-bottom: 10px;
+    }
+
+    .search_sidebar{
+        box-shadow: 0 0 0.8823em 0 rgba(0, 0, 0, 0.5);
+        padding: 15px;
+        background-color: #37454d;
+        color: #ffffff;
+        border-radius: 5px;
+        letter-spacing: 1px;
+    }
+
+    .page_active{
+        background-color: #4285F4;
+        color: white;
+    }
+
+    .select2-selection__choice{
+        color: black;
     }
 </style>
 @section('content')
@@ -223,6 +241,32 @@
                             <input id="search_address" class="form-control" type="text" maxlength="80">
                         </div>
                     </div>
+                    <div class="search_item">
+                        <label name="subject">Area</label>
+                        <select class="form-control" id="search_area">
+                            <option value="" selected> -</option>
+                            @foreach($area_list as $area)
+                                <option value='{{ $area['id'] }}'>{{ $area['name_en'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="search_item">
+                        <label name="subject">District</label>
+                        <select class="form-control" id="search_district">
+                            <option value="" selected> -</option>
+                            @foreach($district_list as $district)
+                                <option value='{{ $district['id'] }}'>{{ $district['name_en'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="search_item">
+                        <label name="subject">Type</label>
+                        <select class="form-control select2-multi" name="search_types[]" id="search_types" multiple="multiple" style="width: 100%">
+                            @foreach($type_list as $type)
+                                <option value='{{ $type['id'] }}'>{{ $type['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="col-md-10">
@@ -242,7 +286,7 @@
                                 <span>Total <span id="total_station"></span> Stations found.</span>
                             </div>
                             <div class="col-md-6" style="text-align: right">
-                                <span>Page. <span id="page">1</span> / Total <span id="total_page">{{$total_page}}</span> pages.</span>
+                                <span>Page. <span id="page">1</span> / Total <span id="total_page"></span> pages.</span>
                             </div>
                         </div>
 
@@ -251,12 +295,9 @@
                         </div>
 
                         <div class="pagination">
-                            @for ($i = 1; $i <= $total_page; $i++)
-                                <div class="page_item" id="page_{{$i}}" onclick="changePage({{$i}})">{{$i}}</div>
-                            @endfor
-                                <input type="hidden" id="current_page" value="1">
-                        </div>
 
+                        </div>
+                            <input type="hidden" id="current_page" value="1">
                     </div>
                 </div>
 
@@ -501,13 +542,6 @@ function changeLanguage() {
 function getCurrentPage() {
 
     var page = $('#current_page').val();
-
-    $('.page_item').css("background-color", "white");
-    $('.page_item').css("color", "#244a83");
-
-    $('#page_'+page).css("background-color", "#4285F4");
-    $('#page_'+page).css("color", "white");
-
     $('#page').html(page);
 
     return page;
@@ -537,6 +571,14 @@ function getPageStation() {
     var offset = (page * limit) - limit;
     var name = $("#search_location").val();
     var address = $('#search_address').val();
+    var area = $('#search_area').val();
+    var district = $('#search_district').val();
+    var type = $('#search_types').val();
+    var temp = '';
+    $.each(type, function (key, val) {
+        temp = temp + val +',';
+    });
+    type = temp.slice(0,-1);
 
     $.ajax({
         url: 'station/search',
@@ -546,15 +588,33 @@ function getPageStation() {
             limit: limit,
             offset: offset,
             name: name,
-            address: address
+            address: address,
+            area_id: area,
+            district_id: district,
+            type : type
         },
         dataType: 'JSON',
         beforeSend: function () {
             $('#station_area').html('');
+            $('.pagination').html('');
         },
         success: function (data) {
             if(data['result']['status'] == 'success') {
                 //console.log(data);
+
+                var total = data.result.total;
+                var per_page = 32;
+                var pages = Math.floor(total/per_page) + 1;
+                $('#total_page').html(pages);
+
+                for (i = 1; i <= pages; i++) {
+                    if(page == i){
+                        $('.pagination').append('<div class="page_item page_active" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                    } else {
+                        $('.pagination').append('<div class="page_item" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                    }
+                }
+
                 $.each(data.result.station, function (key, val) {
                     //console.log(val.location_en);
 
@@ -923,8 +983,17 @@ $('.create_new_station a').click(function(e) {
     });
 
     $("#search_location, #search_address").keyup(function(){
-        getPageStation();
+        TriggerSearchApi();
     });
+
+    $('#search_area, #search_district, #search_types').change(function(){
+        TriggerSearchApi();
+    });
+
+    function TriggerSearchApi() {
+        $('#current_page').val('1'); //reset page to 1 to fix error display
+        getPageStation();
+    }
 
 </script>
 

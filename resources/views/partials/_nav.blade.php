@@ -12,9 +12,9 @@
     font-size: 19px;
   }
 
-  @media (min-width: 1200px){
+  @media (min-width: 1300px){
     .container {
-      width: 1500px !important;
+      width: 1300px !important;
     }
   }
 
@@ -110,7 +110,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="#"><i class="fab fa-battle-net"></i> Station Management System</a>
+      <a class="navbar-brand" href="{{URL::to('/')}}"><i class="fab fa-battle-net"></i> Station Management System</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -126,7 +126,7 @@
             <a href="/" class="dropdown-toggle nav_user_box" data-toggle="dropdown" role="button" aria-haspopup="true"
                aria-expanded="false"><i class="fas fa-user-circle"></i> &nbsp; {{ Auth::user()->name }} <span class="caret"></span></a>
             <ul class="dropdown-menu">
-                <li><a href=""><i class="fas fa-sign-out-alt"></i> &nbsp; Logout</a></li>
+                <li><a href="{{URL::to('/')}}/auth/logout"><i class="fas fa-sign-out-alt"></i> &nbsp; Logout</a></li>
             </ul>
           </li>
         
