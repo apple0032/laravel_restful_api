@@ -45,15 +45,14 @@
     }
 
     .pagination{
-        margin-top: 10px;
-        font-size: 20px;
+        margin:0 !important;
         color: #244a83;
         font-family: 'Noto Sans TC', sans-serif ;
     }
 
     .station_header{
         margin-bottom: 10px;
-        font-size: 30px;
+        font-size: 35px;
         text-transform: capitalize;
     }
 
@@ -75,7 +74,7 @@
     .page_info{
         font-size: 16px;
         font-weight: bold;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
     }
 
     #page, #total_station{
@@ -218,6 +217,28 @@
     .select2-selection__choice{
         color: black;
     }
+
+    .page_i{
+        padding: 4px;
+    }
+
+    .toper_page{
+        float: right;
+        margin-bottom: 10px !important;
+        font-size: 14px;
+    }
+
+    .page_container{
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .clear_search{
+        text-align: center;
+        font-size: 15px;
+        margin-top: 20px;
+        cursor: pointer;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -267,37 +288,42 @@
                             @endforeach
                         </select>
                     </div>
+                    <div class="clear_search">
+                        <i class="fas fa-trash"></i>
+                    </div>
                 </div>
             </div>
             <div class="col-md-10">
                 <div class="row">
                     <div class="col-md-12 station_header">
-                        <i class="fas fa-charging-station"></i> <span>Electric vehicle charging station</span>
+                        <i class="fas fa-charging-station"></i> <span>Electric vehicle charging stations in Hong Kong</span>
                         <button type="button" class="btn btn-primary btn_lang" onclick="changeLanguage()" data-lang="en" data-toggle="tooltip" title="Change language">中文</button>
                         {{--<input class="btn btn-info btn_lang" type="button" value="tc" onclick="changeLanguage()">--}}
                     </div>
                 </div> <!-- end of header .row -->
 
+                <div class="row page_info">
+                    <div class="col-md-6">
+                        <span>Total <span id="total_station"></span> Stations found.</span>
+                    </div>
+                    <div class="col-md-6" style="text-align: right">
+                        <span>Page. <span id="page">1</span> / Total <span id="total_page"></span> pages.</span>
+                    </div>
+                </div>
+                <div class="pagination toper_page"></div>
+
                 <div class="row station_box">
                     <div class="col-md-12">
-
-                        <div class="row page_info">
-                            <div class="col-md-6">
-                                <span>Total <span id="total_station"></span> Stations found.</span>
-                            </div>
-                            <div class="col-md-6" style="text-align: right">
-                                <span>Page. <span id="page">1</span> / Total <span id="total_page"></span> pages.</span>
-                            </div>
-                        </div>
 
                         <div class="row" id="station_area">
 
                         </div>
 
-                        <div class="pagination">
-
+                        <div class="page_container">
+                            <div class="pagination"></div>
                         </div>
-                            <input type="hidden" id="current_page" value="1">
+
+                        <input type="hidden" id="current_page" value="1">
                     </div>
                 </div>
 
@@ -603,17 +629,37 @@ function getPageStation() {
                 //console.log(data);
 
                 var total = data.result.total;
-                var per_page = 32;
+                var per_page = '{{$per_page}}';
                 var pages = Math.floor(total/per_page) + 1;
                 $('#total_page').html(pages);
 
+                $('.pagination').append('<div class="page_item page_i" id="page_1" onclick="changePage(1)">' + '<i class="fas fa-step-backward"></i>' + '</div>');
+
+                if(page != 1) {
+                    $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) - 1) + '" onclick="changePage(' + (parseInt(page) - 1) + ')">' + '<i class="fas fa-backward"></i>' + '</div>');
+                }
+
+
                 for (i = 1; i <= pages; i++) {
-                    if(page == i){
-                        $('.pagination').append('<div class="page_item page_active" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                    if((i - page <= 3) && (page - i <= 3)) {
+                        if (page == i) {
+                            $('.pagination').append('<div class="page_item page_active" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                        } else {
+                            $('.pagination').append('<div class="page_item" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                        }
                     } else {
-                        $('.pagination').append('<div class="page_item" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                        if(i < 10) {
+                            $('.pagination').append('.');
+                        }
                     }
                 }
+
+                if(page < pages) {
+                    $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) + 1) + '" onclick="changePage(' + (parseInt(page) + 1) + ')">' + '<i class="fas fa-forward"></i>' + '</div>');
+                }
+
+                $('.pagination').append('<div class="page_item page_i" id="page_' + parseInt(pages) + '" onclick="changePage(' + parseInt(pages)  + ')">' + '<i class="fas fa-step-forward"></i>' + '</div>');
+
 
                 $.each(data.result.station, function (key, val) {
                     //console.log(val.location_en);
@@ -756,7 +802,7 @@ function InitGoogleMapMarker(lat,lng) {
         position: myLatLng,
         map: map,
         draggable: true,
-        icon: 'public/images/red_marker.png'
+        icon: 'public/images/pikachu.png'
         //title: 'Hello World!'
     });
 
@@ -908,7 +954,7 @@ $('.create_new_station a').click(function(e) {
         position: myLatLng,
         map: map,
         draggable: true,
-        icon: 'public/images/red_marker.png'
+        icon: 'public/images/pikachu.png'
         //title: 'Hello World!'
     });
 
@@ -994,6 +1040,19 @@ $('.create_new_station a').click(function(e) {
         $('#current_page').val('1'); //reset page to 1 to fix error display
         getPageStation();
     }
+
+    $(document).ready(function () {
+        $(".search_sidebar").sticky({topSpacing: 0});
+    });
+
+    $('.clear_search').click(function(){
+        $("#search_location").val('');
+        $('#search_address').val('');
+        $('#search_area').val('');
+        $('#search_district').val('');
+        $('#search_types').val('').trigger('change');
+        getPageStation();
+    });
 
 </script>
 
