@@ -239,6 +239,11 @@
         margin-top: 20px;
         cursor: pointer;
     }
+
+    .login_box{
+        padding-top: 10px;
+        height: 310px;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -529,6 +534,18 @@
                                 </div>
                             </div>
 
+                            <div class="login_content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><i class="fas fa-times-circle"></i></button>
+                                    <h4 class="title">Login to Station Management System</h4>
+                                </div>
+                                <div class="login_box">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -1053,6 +1070,54 @@ $('.create_new_station a').click(function(e) {
         $('#search_types').val('').trigger('change');
         getPageStation();
     });
+
+    $('.login_btn a').click(function(e) {
+        e.preventDefault();
+
+        $('#modal_btn').click();
+        $('.show_content').fadeOut();
+        $('.update_content').fadeOut();
+        $('.create_form').fadeOut();
+        $('.login_content').fadeIn();
+
+        $('.login_box').load('{{URL::to('/')}}/auth/login .login_box', function () {
+            $('.btn-login').click(function(e) {
+                e.preventDefault();
+
+                var email = $('#email').val();
+                var password = $('#password').val();
+
+                $.ajax({
+                    url: 'http://localhost/laravel-api/auth/login',
+                    async: false,
+                    type: 'POST',  //GET, DELETE
+                    data: {
+                        email: email,
+                        password: password
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function () {
+
+                    },
+                    success: function (data) {
+                        alert('success');
+                    },
+                    complete : function(data){
+
+                        console.log("ajax login");
+
+                        $('.navbar-right').load('{{URL::to('/')}} .navbar-right', function () {
+
+                        });
+
+                        $('.modal').modal('hide');
+                    }
+                });
+
+            });
+        });
+    });
+
 
 </script>
 

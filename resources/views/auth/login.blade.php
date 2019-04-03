@@ -18,7 +18,7 @@
 				{{ Form::checkbox('remember') }}{{ Form::label('remember', "Remember Me") }}
 				
 				<br>
-				{{ Form::submit('Login', ['class' => 'btn btn-primary btn-block']) }}
+				{{ Form::submit('Login', ['class' => 'btn btn-primary btn-block btn-login']) }}
 
 				<p><a href="{{ url('password/reset') }}">Forgot My Password</a>
 
@@ -29,22 +29,5 @@
 
 @endsection
 @section('scripts')
-	<script>
-        $.ajax({
-            url: 'http://localhost/laravel-api/auth/login',
-            async: false,
-            type: 'POST',  //GET, DELETE
-            data: {
-                email: 'test@gmail.com',
-                password: '123456'
-            },
-            dataType: 'JSON',
-            beforeSend: function () {
 
-            },
-            success: function (data) {
-				alert('success');
-            }
-        });
-	</script>
 @endsection

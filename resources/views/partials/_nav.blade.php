@@ -132,7 +132,7 @@
         
         @else
 
-          <li class="cool-link"><a href="{{URL::to('/')}}/auth/login">Login</a></li>
+          <li class="cool-link login_btn"><a href="{{URL::to('/')}}/auth/login">Login</a></li>
           <li class="cool-link"><a href="{{URL::to('/')}}/auth/register">Register</a></li>
 
         @endif
