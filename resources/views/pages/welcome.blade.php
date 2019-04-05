@@ -244,6 +244,10 @@
         padding-top: 10px;
         height: 310px;
     }
+
+    .login_content{
+        display:none;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -524,8 +528,8 @@
                                     <div class="col-md-12">
                                         <label name="subject">Longitude & Latitude</label>
                                         <div id="map2"></div>
-                                        <input type="hidden" id="map_lat" value="">
-                                        <input type="hidden" id="map_lng" value="">
+                                        <input type="hidden" id="map_lat" value="22.343208608975587">
+                                        <input type="hidden" id="map_lng" value="114.1068853139875">
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -958,6 +962,7 @@ $('.create_new_station a').click(function(e) {
 
     $('.show_content').fadeOut();
     $('.update_content').fadeOut();
+    $('.login_content').fadeOut();
     $('.create_form').fadeIn();
 
     var myLatLng = {lat: 22.343208608975587, lng: 114.1068853139875};
