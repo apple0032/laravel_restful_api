@@ -255,6 +255,16 @@
         margin-top: 30px;
         margin-bottom: 30px;
     }
+
+    #container404 .clear_search{
+        font-size: 24px;
+        color:#337ab7;
+    }
+
+    #container404 .clear_search:hover{
+        text-decoration: underline;
+        color: #1d63b7;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -346,7 +356,7 @@
                 <div id="container404">
                     <img src="https://2.bp.blogspot.com/-WaHaYF7vMRo/VX_Cro6zTDI/AAAAAAAACdY/JMpdKqMaH6w/s1600/notfound.jpeg" id="logo404">
                     <h2>Stations not found.</h2>
-                    <h3>Please try to search again.</h3>
+                    <h3>Please try to search again, <span class="clear_search">or clear search.</span> </h3>
                 </div>
 
                 <button type="button" id="modal_btn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Modal"></button>

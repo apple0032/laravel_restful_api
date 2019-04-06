@@ -116,7 +116,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="{{ Request::is('/') ? "activated" : "" }} cool-link"><a href="{{URL::to('/')}}">Home</a></li>
+        <li class="{{ Request::is('/') ? "activated" : "" }} cool-link home_btn"><a href="{{URL::to('/')}}">Home</a></li>
         <li class="cool-link create_new_station"><a href="">Create</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">

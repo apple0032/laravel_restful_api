@@ -61,6 +61,11 @@ class PagesController extends Controller {
 	}
         
     public function ConvertIndex(){
+
+        if(Schema::hasTable('station')){
+            return redirect('/');
+        }
+
         return view('pages.convert');
     }
 
