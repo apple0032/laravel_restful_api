@@ -18,6 +18,10 @@ class PagesController extends Controller {
 
 	public function getIndex()
     {
+        if(!Schema::hasTable('station')){
+            return redirect('/convert-page');
+        }
+            
         if(!Auth::check()){
             $user_id = '';
         } else {
@@ -55,6 +59,10 @@ class PagesController extends Controller {
         $xml = simplexml_load_string($xml_string);
        return $xml;
 	}
+        
+    public function ConvertIndex(){
+        return view('pages.convert');
+    }
 
     public function ConvertXMLStoreDB(){
 

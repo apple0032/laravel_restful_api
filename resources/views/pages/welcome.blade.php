@@ -248,6 +248,13 @@
     .login_content{
         display:none;
     }
+    
+    #container404{
+        text-align: center;
+        display: none;
+        margin-top: 30px;
+        margin-bottom: 30px;
+    }
 </style>
 @section('content')
         <div class="alert alert-success">
@@ -334,6 +341,12 @@
 
                         <input type="hidden" id="current_page" value="1">
                     </div>
+                </div>
+                
+                <div id="container404">
+                    <img src="https://2.bp.blogspot.com/-WaHaYF7vMRo/VX_Cro6zTDI/AAAAAAAACdY/JMpdKqMaH6w/s1600/notfound.jpeg" id="logo404">
+                    <h2>Stations not found.</h2>
+                    <h3>Please try to search again.</h3>
                 </div>
 
                 <button type="button" id="modal_btn" class="btn btn-info btn-lg" data-toggle="modal" data-target="#Modal"></button>
@@ -654,33 +667,38 @@ function getPageStation() {
                 var pages = Math.floor(total/per_page) + 1;
                 $('#total_page').html(pages);
 
-                $('.pagination').append('<div class="page_item page_i" id="page_1" onclick="changePage(1)">' + '<i class="fas fa-step-backward"></i>' + '</div>');
+                if(data.result.total != 0){
+                    $('#container404').hide();
+                    
+                    $('.pagination').append('<div class="page_item page_i" id="page_1" onclick="changePage(1)">' + '<i class="fas fa-step-backward"></i>' + '</div>');
 
-                if(page != 1) {
-                    $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) - 1) + '" onclick="changePage(' + (parseInt(page) - 1) + ')">' + '<i class="fas fa-backward"></i>' + '</div>');
-                }
+                    if(page != 1) {
+                        $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) - 1) + '" onclick="changePage(' + (parseInt(page) - 1) + ')">' + '<i class="fas fa-backward"></i>' + '</div>');
+                    }
 
 
-                for (i = 1; i <= pages; i++) {
-                    if((i - page <= 3) && (page - i <= 3)) {
-                        if (page == i) {
-                            $('.pagination').append('<div class="page_item page_active" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                    for (i = 1; i <= pages; i++) {
+                        if((i - page <= 3) && (page - i <= 3)) {
+                            if (page == i) {
+                                $('.pagination').append('<div class="page_item page_active" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                            } else {
+                                $('.pagination').append('<div class="page_item" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
+                            }
                         } else {
-                            $('.pagination').append('<div class="page_item" id="page_' + i + '" onclick="changePage(' + i + ')">' + i + '</div>');
-                        }
-                    } else {
-                        if(i < 10) {
-                            $('.pagination').append('.');
+                            if(i < 10) {
+                                $('.pagination').append('.');
+                            }
                         }
                     }
+
+                    if(page < pages) {
+                        $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) + 1) + '" onclick="changePage(' + (parseInt(page) + 1) + ')">' + '<i class="fas fa-forward"></i>' + '</div>');
+                    }
+
+                    $('.pagination').append('<div class="page_item page_i" id="page_' + parseInt(pages) + '" onclick="changePage(' + parseInt(pages)  + ')">' + '<i class="fas fa-step-forward"></i>' + '</div>');
+                } else {
+                    $('#container404').show();
                 }
-
-                if(page < pages) {
-                    $('.pagination').append('<div class="page_item page_i" id="page_' + (parseInt(page) + 1) + '" onclick="changePage(' + (parseInt(page) + 1) + ')">' + '<i class="fas fa-forward"></i>' + '</div>');
-                }
-
-                $('.pagination').append('<div class="page_item page_i" id="page_' + parseInt(pages) + '" onclick="changePage(' + parseInt(pages)  + ')">' + '<i class="fas fa-step-forward"></i>' + '</div>');
-
 
                 $.each(data.result.station, function (key, val) {
                     //console.log(val.location_en);
