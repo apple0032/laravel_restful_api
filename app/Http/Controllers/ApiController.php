@@ -233,13 +233,15 @@ class ApiController extends Controller
     public function deleteStation($id) {
 
         $station = Station::where('id','=',$id)->first();
-        $station->is_delete = 1;
-        $station->save();
+        //$station->is_delete = 1;
+        //$station->save();
+        $deleted_station = $station;
+        $station->delete();
 
         $result = array(
             'status' => 'success',
             'type' => 'Delete station',
-            'station' => $station,
+            'station' => $deleted_station,
         );
 
        return response()->json([

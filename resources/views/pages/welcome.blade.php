@@ -121,7 +121,7 @@
         }
     }
 
-    .alert-success{
+    .alert-success, .alert-danger{
         display: none;
     }
 
@@ -496,6 +496,14 @@
                                     <h4 class="title">Create New Station</h4>
                                 </div>
                                 <div class="row update_form">
+
+                                    <div class="alert alert-danger">
+                                        <strong>Error!</strong>
+                                        <span class="error_message">
+
+                                        </span>
+                                    </div>
+
                                     <div class="col-md-6">
                                         <label name="subject">Location EN</label>
                                         <div class="input-group">
@@ -1071,6 +1079,17 @@ $('.create_new_station a').click(function(e) {
                         }, 1500);
 
                         getPageStation();
+                    } else {
+                        $('.alert-danger').show();
+
+                        $.each(data.error_message, function (key, val) {
+                            $('.error_message').append('<div>'+val+'</div>')
+                        });
+
+                        setTimeout(function(){
+                            $('.alert-danger').fadeOut();
+                            $('.error_message').html('');
+                        }, 2000);
                     }
                 }
             });
