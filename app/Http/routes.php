@@ -37,8 +37,9 @@ Route::group(['middleware' => ['web']], function () {
 	Route::get('/', 'PagesController@getIndex');
 	
 	// Convert XML data & stored in DB
-        Route::get('/convert-page', ['uses' => 'PagesController@ConvertIndex']);
+    Route::get('/convert-page', ['uses' => 'PagesController@ConvertIndex']);
 	Route::get('/convert', ['uses' => 'PagesController@ConvertXMLStoreDB']);
+    Route::get('/drop', ['uses' => 'PagesController@Drop']);
 
 	//Data management
 	Route::get('/station', ['uses' => 'ApiController@getAllStation']);

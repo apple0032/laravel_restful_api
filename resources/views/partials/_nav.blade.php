@@ -120,6 +120,8 @@
         <li class="cool-link create_new_station"><a href="">Create</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <li class="cool-link convert_navbtn"><a href="{{URL::to('/')}}/convert-page">Convert</a></li>
+
         @if (Auth::check())
 
           <li class="dropdown">

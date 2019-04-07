@@ -1121,7 +1121,7 @@ $('.create_new_station a').click(function(e) {
                 var password = $('#password').val();
 
                 $.ajax({
-                    url: 'http://localhost/laravel-api/auth/login',
+                    url: '{{URL::to('/')}}/auth/login',
                     async: false,
                     type: 'POST',  //GET, DELETE
                     data: {

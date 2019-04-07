@@ -6,6 +6,10 @@
     {!! Html::style('public/css/parsley.css') !!}
 @endsection
 <style>
+    .convert_navbtn{
+        display: none !important;
+    }
+
     .create_new_station{
         display: none !important;
     }
@@ -94,54 +98,75 @@
         color: #a8a8a8;
     }
 
-    .convert_btn{
+    .convert_btn, .drop_btn{
         text-align: center;
     }
 
-    .btn_convert{
+    .btn_convert, .btn_drop{
         font-size: 22px !important;
     }
+
 </style>
 @section('content')
-        <div class="convert_container">
-            <div class="convert_header">
-                <i class="fas fa-sync-alt"></i>Convert
-            </div>
+        @if($drop == false)
+            <div class="convert_container">
+                <div class="convert_header">
+                    <i class="fas fa-sync-alt"></i>Convert
+                </div>
 
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span class="alert_message">
-                    There are no charging stations tables found in our system database. <br><br>
-                    <b>In order to maintain the system, you must retrieve data from <u>https://opendata.clp.com.hk</u></b>
-                </span>
-            </div>
-
-            <div class="convert_content">
-                <i class="fas fa-database"></i>
-                <span class="convert_message">
-                    Basic tables will be generated in our database by clicking the <b>'Confirm Convert'</b> button. <br><br>
-
-                    FOUR tables will be created : <br>
-                    <span class="convert_tables">
-                        `station` - To store stations information <br>
-                        `type` - To store all types of stations <br>
-                        `district` - To store 18 district name located in Hong Kong <br>
-                        `area` - To store four main area located in Hong Kong
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span class="alert_message">
+                        There are no charging stations tables found in our system database. <br><br>
+                        <b>In order to maintain the system, you must retrieve data from <u>https://opendata.clp.com.hk</u></b>
                     </span>
+                </div>
 
-                    <br><br>
-                    The database has been done <b>fully normalization.</b> <br>
-                    The type, district and area attributes has been represented as a <b>id</b> which is a foreign key to make relationship with other tables. <br>
-                    The type_id in station table is a comma string which is storing multiple type of station. <br><br>
+                <div class="convert_content">
+                    <i class="fas fa-database"></i>
+                    <span class="convert_message">
+                        Basic tables will be generated in our database by clicking the <b>'Confirm Convert'</b> button. <br><br>
 
-                    <b>Click here to retrieve data from <u>https://opendata.clp.com.hk</u></b>
-                </span>
+                        FOUR tables will be created : <br>
+                        <span class="convert_tables">
+                            `station` - To store stations information <br>
+                            `type` - To store all types of stations <br>
+                            `district` - To store 18 district name located in Hong Kong <br>
+                            `area` - To store four main area located in Hong Kong
+                        </span>
+
+                        <br><br>
+                        The database has been done <b>fully normalization.</b> <br>
+                        The type, district and area attributes has been represented as a <b>id</b> which is a foreign key to make relationship with other tables. <br>
+                        The type_id in station table is a comma string which is storing multiple type of station. <br><br>
+
+                        <b>Click here to retrieve data from <u>https://opendata.clp.com.hk</u></b>
+                    </span>
+                </div>
+
+                <div class="row convert_btn">
+                    <button type="button" class="btn btn-primary btn_convert" onclick="converter()" data-toggle="tooltip" title="Click to convert">Confirm Convert</button>
+                </div>
             </div>
+        @else
+            <div class="convert_container">
+                <div class="convert_header">
+                    <i class="fas fa-trash-alt"></i></i> Drop Tables
+                </div>
 
-            <div class="row convert_btn">
-                <button type="button" class="btn btn-primary btn_convert" onclick="converter()" data-toggle="tooltip" title="Click to convert">Confirm Convert</button>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 22px"></i>
+                    <span class="alert_message">
+                        <b>Electric Vehicle Charging Stations tables found in our system database. <br><br>
+                        If you want to drop those tables, please click below button. Noted that all of the tables and station information will be removed immediately.</b>
+                    </span>
+                </div>
+
+                <div class="row drop_btn">
+                    <button type="button" class="btn btn-danger btn_drop" onclick="drop()" data-toggle="tooltip" title="Click to drop">Confirm Drop</button>
+                </div>
             </div>
-        </div>
+        @endif
 
         <div class="px_loading">
             <div class="lds-hourglass"></div>
@@ -167,6 +192,38 @@
             setTimeout(function(){
                 $.ajax({
                     url: 'convert',
+                    async: false,
+                    type: 'GET',
+                    data: {
+                        //no form data submit in GET request
+                    },
+                    dataType: 'JSON',
+                    beforeSend: function () {
+
+                    },
+                    success: function (data) {
+                        console.log(data);
+                        if(data.result == 'success'){
+                            window.location.href = "{{URL::to('/')}}";
+                        }
+                    }
+                });
+            }, 2000);
+
+        }
+    }
+
+    function drop() {
+        var con = confirm("Are you sure you want to drop tables ?");
+        if (con) {
+
+            $('.px_loading').show();
+            $(".convert_container").css("opacity", "0.2");
+            $(".convert_container").css("pointer-events", "none");
+
+            setTimeout(function(){
+                $.ajax({
+                    url: 'drop',
                     async: false,
                     type: 'GET',
                     data: {

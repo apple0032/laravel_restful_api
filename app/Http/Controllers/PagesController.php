@@ -62,11 +62,25 @@ class PagesController extends Controller {
         
     public function ConvertIndex(){
 
-        if(Schema::hasTable('station')){
-            return redirect('/');
+        if(!Schema::hasTable('station')){
+            $drop = false;
+        } else {
+            $drop = true;
         }
 
-        return view('pages.convert');
+        return view('pages.convert')->with('drop',$drop);
+    }
+
+    public function Drop(){
+
+        Schema::dropIfExists('station');
+        Schema::dropIfExists('area');
+        Schema::dropIfExists('district');
+        Schema::dropIfExists('type');
+
+        return response()->json([
+            'result' => 'success'
+        ]);
     }
 
     public function ConvertXMLStoreDB(){
