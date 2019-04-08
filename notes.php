@@ -43,6 +43,9 @@
 	//jquery refresh div without reloading page
 	- https://www.google.com/search?q=jquery+refresh+div+without+reloading+page&oq=jquery+refresh+div+w&aqs=chrome.1.69i57j0l5.12079j0j7&sourceid=chrome&ie=UTF-8
 
+	//Ajax login response
+	- https://stackoverflow.com/questions/41762405/login-form-with-ajax-using-laravel-5-2
+
 
 */
 ?>
