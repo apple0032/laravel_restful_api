@@ -46,7 +46,14 @@
                     "description": "Success output"
                 },
                 "500": {
-                    "description": "\"status\": \"error\","
+                    "examples": {
+                        "application/json": {
+                            "result": "error",
+                            "status": "404",
+                            "error_message": "Error has occurred!"
+                        }
+                    },
+                     "description": "Default Error Exception"
                 }
             },
             "parameters": [
