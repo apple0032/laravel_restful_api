@@ -121,6 +121,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li class="cool-link convert_navbtn"><a href="{{URL::to('/')}}/convert-page">Convert</a></li>
+        <li class="cool-link convert_navbtn"><a href="{{URL::to('/')}}/swagger.html">Documentation</a></li>
 
         @if (Auth::check())
 
