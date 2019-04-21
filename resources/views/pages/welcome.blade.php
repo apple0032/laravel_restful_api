@@ -781,7 +781,7 @@ function getPageStation() {
 
                     $('#station_area').append('' +
                         '<div class="col-md-3">' +
-                            '<div class="station_item" data-sid="'+val.id+'"> '+
+                            '<div class="station_item" data-sid="'+val.id+'" data-toggle="tooltip" title="'+station_name+'"> '+
                                 '<span>' + station_name + '</span>' +
                                 '<div class="station_image"> '+
                                     '<img src="https://maps.googleapis.com/maps/api/streetview?size=500x400&location='+val.lat+','+val.lng+'&fov=1000&heading=200&pitch=1&key=AIzaSyB7BhQ5f9OupkTJRgLg_vCehCi8AlLOSuQ">' +
@@ -791,6 +791,7 @@ function getPageStation() {
                 });
 
                 $('#total_station').html(data['result']['total']);
+                $('[data-toggle="tooltip"]').tooltip();
             }
         }
     });
