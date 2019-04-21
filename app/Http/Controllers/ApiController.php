@@ -19,12 +19,14 @@ class ApiController extends Controller
     public function getAllStation() {
 
         $station = DB::table('station')
-            ->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name' , 'district.name_tc as district_name_tc')
+            //->select('station.*','type.name as type_name','area.name_en as area_name_en', 'area.name_tc as area_name_tc','district.name_en as district_name' , 'district.name_tc as district_name_tc')
+            ->select('station.id','station.location_en','station.lat', 'station.lng')
             ->leftJoin('type', 'station.type', '=', 'type.id')
             ->leftJoin('area', 'station.area_id', '=', 'area.id')
             ->leftJoin('district', 'station.district_id', '=', 'district.id')
             ->where('station.is_delete','=','0')
             ->where('station.is_active','=','1')
+            //->where('station.id','=','1')
             ->get();
 
         $result = array(

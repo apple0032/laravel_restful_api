@@ -28,13 +28,12 @@ class PagesController extends Controller {
             $user_id = Auth::user()->id;
         };
 
-        //$station = app('App\Http\Controllers\ApiController')->getAllStation()->getData();
-        //$station = json_decode(json_encode($station), True);
+        $station = app('App\Http\Controllers\ApiController')->getAllStation()->getData();
+        $station = json_decode(json_encode($station), True);
+        $station = $station['result']['station'];
+        $station = json_encode($station);
 
-        //$total_station = count($station['result']['station']);
         $per_page = 32;
-        //$total_page = intval($total_station / $per_page) + 1;
-
 
         $district_list = District::where('is_active', '=', '1')->get()->toArray();
         $type_list = Type::where('is_active', '=', '1')->where('is_delete', '=', '0')->get()->toArray();
@@ -45,7 +44,8 @@ class PagesController extends Controller {
         ->with('district_list', $district_list)
         ->with('type_list',$type_list)
         ->with('area_list',$area_list)
-        ->with('user_id', $user_id);
+        ->with('user_id', $user_id)
+        ->with('station', $station);
 	}
 
 	public function getXMLdata_en(){

@@ -115,7 +115,7 @@
     }
 
     @media (min-width: 768px) {
-        .modal-dialog {
+        #Modal .modal-dialog {
             width: 900px !important;
             margin: 30px auto;
         }
@@ -153,6 +153,10 @@
 
     #map , #map2{
         height: 320px;
+    }
+
+    #map3{
+        height: 1200px;
     }
 
     .lds-hourglass {
@@ -238,6 +242,10 @@
         font-size: 15px;
         margin-top: 20px;
         cursor: pointer;
+        letter-spacing: 0px;
+        border: 2px solid;
+        border-radius: 5px;
+        padding: 5px;
     }
 
     .login_box{
@@ -264,6 +272,33 @@
     #container404 .clear_search:hover{
         text-decoration: underline;
         color: #1d63b7;
+    }
+
+    .trigger_map_img{
+        width: 100%;
+    }
+
+    .google_map_all{
+        border: 3px solid #2d6098;
+        margin-top: 20px;
+        border-radius: 5px;
+        box-shadow: 0 1px 4px rgba(41, 51, 57, .9);
+        background: #2d6098;
+        text-align: center;
+        letter-spacing: 0px;
+        cursor: pointer;
+    }
+
+    #google-map-modal .modal-dialog {
+        width: 90%;
+        margin: 30px auto;
+    }
+
+    .gmap_st_name{
+        margin-bottom: 10px;
+        font-size: 20px;
+        padding: 5px;
+        font-weight: bold;
     }
 </style>
 @section('content')
@@ -315,7 +350,11 @@
                         </select>
                     </div>
                     <div class="clear_search">
-                        <i class="fas fa-trash"></i>
+                        <i class="fas fa-trash"></i> Clear Search
+                    </div>
+                    <div class="google_map_all" onclick="GoogleMapAllStations()" data-toggle="modal" data-target="#google-map-modal">
+                        <img src="public/images/googlemap_banner.png" class="trigger_map_img">
+                        Google map view
                     </div>
                 </div>
             </div>
@@ -587,6 +626,19 @@
                 </div>
             </div>
         </div>
+
+        <div class="gmap_all">
+            <div id="google-map-modal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <input type="hidden" id="gmap-flag" value="off">
+                            <div id="map3"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 @stop
 
 @section('scripts')
@@ -661,7 +713,7 @@ function getPageStation() {
     $.ajax({
         url: 'station/search',
         async: false,
-        type: 'POST',  //GET, DELETE
+        type: 'POST',
         data: {
             limit: limit,
             offset: offset,
@@ -751,97 +803,100 @@ function clickStationInfo() {
     $('.station_item').each(function () {
         $(this).on("click", function () {
             var sid = $(this).data('sid');
-
-            $.ajax({
-                url: 'station/'+ sid,
-                async: false,
-                type: 'GET',
-                data: {
-                    //no form data submit in GET request
-                },
-                dataType: 'JSON',
-                beforeSend: function () {
-                    $('.px_loading').show();
-                    $(".show_content").css("opacity", "0.2");
-                    $(".show_content").css("pointer-events", "none");
-                },
-                success: function (data) {
-                    console.log(data);
-
-                    if(data.result.status == 'success') {
-
-                        var station = data.result.station;
-                        $('#modal_id').val(station.id);
-
-                        var lang = $('.btn_lang').data('lang');
-                        if (lang == 'en') {
-                            var station_name = station.location_en;
-                            var station_address = station.address_en;
-                            var station_area = station.area_name_en;
-                            var station_district = station.district_name_en;
-                        } else {
-                            var station_name = station.location_tc;
-                            var station_address = station.address_tc;
-                            var station_area = station.area_name_tc;
-                            var station_district = station.district_name_tc;
-                        }
-
-                        $('.modal-title').html('<i class="fas fa-map-marker-alt"></i> '+station_name);
-
-                        $('#gmap_canvas').attr('src','https://maps.google.com/maps?q='+station.lat+'%2C'+station.lng+'&t=&z=16&ie=UTF8&iwloc=&output=embed');
-                        $('#gmap_street').attr('src','https://www.google.com/maps/embed/v1/streetview?key=AIzaSyB7BhQ5f9OupkTJRgLg_vCehCi8AlLOSuQ&location='+station.lat+','+station.lng+'&heading=150&pitch=1&fov=10');
-
-                        $('.station_address span').html(station_address);
-                        if(station.parkingNo != '' && station.parkingNo != null) {
-                            $('.station_parking span').html(station.parkingNo);
-                        } else {
-                            if (lang == 'en') {
-                                $('.station_parking span').html('Not provided');
-                            } else {
-                                $('.station_parking span').html('沒有提供');
-                            }
-                        }
-                        $('.station_type span').html(station.type_name);
-                        $('.station_area span').html(station_area + ' , ' + station_district);
-
-                        if(station.provider != '' && station.provider != null) {
-                            $('.station_provide span').html(station.provider);
-                        } else {
-                            $('.station_provide span').html(station.username);
-                        }
-
-                        $("#district_id").val(station.district_id);
-
-
-                        //console.log(station.type);console.log(s_types);
-                        var s_types = station.type.split(',');
-                        $('#s_types').val(s_types).trigger('change');
-
-                        //Init update form
-                        $('#location_en').val(station.location_en);
-                        $('#location_tc').val(station.location_tc);
-                        $('#address_en').val(station.address_en);
-                        $('#address_tc').val(station.address_tc);
-                        $('#parking_no').val(station.parkingNo);
-                        $('#map_lat').val(station.lat);
-                        $('#map_lng').val(station.lng);
-                        InitGoogleMapMarker(station.lat,station.lng);
-
-                        $('#modal_btn').click();
-
-                        setTimeout(function(){
-                            $('.px_loading').hide();
-                            $(".show_content").css("opacity", "1");
-                            $(".show_content").css("pointer-events", "auto");
-                        }, 1000);
-
-                    }
-                }
-            });
-
+            GetStationInfo(sid);
         });
     });
 }
+
+function GetStationInfo(sid){
+    $.ajax({
+        url: 'station/'+ sid,
+        async: false,
+        type: 'GET',
+        data: {
+            //no form data submit in GET request
+        },
+        dataType: 'JSON',
+        beforeSend: function () {
+            $('.px_loading').show();
+            $(".show_content").css("opacity", "0.2");
+            $(".show_content").css("pointer-events", "none");
+        },
+        success: function (data) {
+            console.log(data);
+
+            if(data.result.status == 'success') {
+
+                var station = data.result.station;
+                $('#modal_id').val(station.id);
+
+                var lang = $('.btn_lang').data('lang');
+                if (lang == 'en') {
+                    var station_name = station.location_en;
+                    var station_address = station.address_en;
+                    var station_area = station.area_name_en;
+                    var station_district = station.district_name_en;
+                } else {
+                    var station_name = station.location_tc;
+                    var station_address = station.address_tc;
+                    var station_area = station.area_name_tc;
+                    var station_district = station.district_name_tc;
+                }
+
+                $('.modal-title').html('<i class="fas fa-map-marker-alt"></i> '+station_name);
+
+                $('#gmap_canvas').attr('src','https://maps.google.com/maps?q='+station.lat+'%2C'+station.lng+'&t=&z=16&ie=UTF8&iwloc=&output=embed');
+                $('#gmap_street').attr('src','https://www.google.com/maps/embed/v1/streetview?key=AIzaSyB7BhQ5f9OupkTJRgLg_vCehCi8AlLOSuQ&location='+station.lat+','+station.lng+'&heading=150&pitch=1&fov=10');
+
+                $('.station_address span').html(station_address);
+                if(station.parkingNo != '' && station.parkingNo != null) {
+                    $('.station_parking span').html(station.parkingNo);
+                } else {
+                    if (lang == 'en') {
+                        $('.station_parking span').html('Not provided');
+                    } else {
+                        $('.station_parking span').html('沒有提供');
+                    }
+                }
+                $('.station_type span').html(station.type_name);
+                $('.station_area span').html(station_area + ' , ' + station_district);
+
+                if(station.provider != '' && station.provider != null) {
+                    $('.station_provide span').html(station.provider);
+                } else {
+                    $('.station_provide span').html(station.username);
+                }
+
+                $("#district_id").val(station.district_id);
+
+
+                //console.log(station.type);console.log(s_types);
+                var s_types = station.type.split(',');
+                $('#s_types').val(s_types).trigger('change');
+
+                //Init update form
+                $('#location_en').val(station.location_en);
+                $('#location_tc').val(station.location_tc);
+                $('#address_en').val(station.address_en);
+                $('#address_tc').val(station.address_tc);
+                $('#parking_no').val(station.parkingNo);
+                $('#map_lat').val(station.lat);
+                $('#map_lng').val(station.lng);
+                InitGoogleMapMarker(station.lat,station.lng);
+
+                $('#modal_btn').click();
+
+                setTimeout(function(){
+                    $('.px_loading').hide();
+                    $(".show_content").css("opacity", "1");
+                    $(".show_content").css("pointer-events", "auto");
+                }, 1000);
+
+            }
+        }
+    });
+}
+
 
 var map;
 var marker;
@@ -948,7 +1003,7 @@ $('#station_confirm').click(function(){
         $.ajax({
             url: 'station/'+id,
             async: false,
-            type: 'PUT',  //GET, DELETE
+            type: 'PUT',
             data: {
                 location_en: loc_en,
                 location_tc: loc_tc,
@@ -1142,7 +1197,7 @@ $('.create_new_station a').click(function(e) {
                 $.ajax({
                     url: '{{URL::to('/')}}/auth/login',
                     async: false,
-                    type: 'POST',  //GET, DELETE
+                    type: 'POST',
                     data: {
                         email: email,
                         password: password
@@ -1170,6 +1225,56 @@ $('.create_new_station a').click(function(e) {
         });
     });
 
+    function GoogleMapAllStations() {
+
+        var flag = $('#gmap-flag').val();
+
+        if(flag == 'off') {
+            setTimeout(function () {
+
+                var locations = [];
+                locations = JSON.parse('<?= $station; ?>');
+
+                var map = new google.maps.Map(document.getElementById('map3'), {
+                    zoom: 12,
+                    center: new google.maps.LatLng(22.343208608975587, 114.1068853139875),
+                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                });
+
+                var infowindow = new google.maps.InfoWindow();
+
+                var marker, i;
+
+                for (i = 0; i < locations.length; i++) {
+                    marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(locations[i]['lat'], locations[i]['lng']),
+                        map: map,
+                        //draggable: true,
+                        icon: 'public/images/s_marker.png'
+                    });
+
+                    google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                        return function () {
+                            //alert(locations[i][0]);
+                            infowindow.setContent(`<div class="gmap_st_name">${locations[i]['location_en']}</div>
+                            <div><button type="button" class="btn btn-primary" onclick="TriggerInfo(${locations[i]['id']})">Details</button></div>
+                            `);
+
+                            infowindow.open(map, marker);
+                        }
+                    })(marker, i));
+                }
+
+            }, 1000);
+
+            $('#gmap-flag').val('on');
+        }
+    }
+
+    function TriggerInfo(sid) {
+        GetStationInfo(sid);
+        $('.gmap_all .modal').modal('hide');
+    }
 
 </script>
 
