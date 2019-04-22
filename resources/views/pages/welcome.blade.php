@@ -1239,7 +1239,8 @@ $('.create_new_station a').click(function(e) {
                 var map = new google.maps.Map(document.getElementById('map3'), {
                     zoom: 12,
                     center: new google.maps.LatLng(22.343208608975587, 114.1068853139875),
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    gestureHandling: 'greedy'
                 });
 
                 var infowindow = new google.maps.InfoWindow();
