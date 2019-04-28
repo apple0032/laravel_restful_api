@@ -256,7 +256,7 @@ class ApiController extends Controller
         //print_r($data);die();
         return response()->json([
             'result' => 'error',
-            'status' => '200',
+            'status' => '400',
             'error_message' => $data
         ],200);
     }
