@@ -38,7 +38,7 @@ https://opendata.clp.com.hk/GetChargingSectionXML.aspx?lang=TC
   <img src="https://i.ibb.co/0sf96gz/db.jpg">
 </p>
 
-### Support
+### Technique Support
 * Google API
 * opendata.clp.com.hk
 * Laravel
@@ -48,9 +48,23 @@ https://opendata.clp.com.hk/GetChargingSectionXML.aspx?lang=TC
 
 ### Initialization
 1. Unzip or git clone the repository
-2. Put the project into an Apache server with PHP installed
+2. Put the project into an Apache server with PHP installed (v5.6 or above would be better)
 3. Install composer on server
 4. Run composer init/composer update
 5. Create `users` table
 6. Copy .env.example to .env then config the file with your db connection
 7. Done and enjoy!
+
+### Demo screenshots
+* Main page
+<img src="https://i.ibb.co/FDdHXWj/1.png">
+
+* Create/Update Box with Google API
+<img src="https://i.ibb.co/c8KsxNG/2.png">
+
+* Point all stations in Google Map
+<img src="https://i.ibb.co/c8KsxNG/3.png">
+
+### Contact
+
+I am KEN, a software developer in Hong Kong. If you have any question for me, please email me by waihongip@gmail.com
