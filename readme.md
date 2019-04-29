@@ -63,7 +63,7 @@ https://opendata.clp.com.hk/GetChargingSectionXML.aspx?lang=TC
 <img src="https://i.ibb.co/c8KsxNG/2.png">
 
 * Point all stations in Google Map
-<img src="https://i.ibb.co/c8KsxNG/3.png">
+<img src="https://i.ibb.co/Z6rGrFB/3.png">
 
 ### Contact
 
